@@ -23,10 +23,10 @@ LEAGUES.insert(0, {"key": "all", "title": "All"})  # Add "All" option to the lis
 
 # Color scheme
 PRIMARY_COLOR = "#ADD8E6"
-SECONDARY_COLOR = "#5F9EA0"
-BACKGROUND_COLOR = "#D3D3D3"
+SECONDARY_COLOR = "#ADD8E6"
+BACKGROUND_COLOR = "#ADD8E6"
 TEXT_COLOR = "#2F4F4F"
-HIGHLIGHT_COLOR = "#FFD700"
+HIGHLIGHT_COLOR = "#ADD8E6"
 FONT_SIZES = [12, 14, 16]
 FONT = "Helvetica"
 
@@ -35,7 +35,7 @@ class SportsOddsApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Live Sports Odds")
-        self.root.geometry("1200x600")
+        self.root.geometry("800x600")
         self.root.config(bg=BACKGROUND_COLOR)
 
         self.logged_in_user = None
@@ -64,8 +64,8 @@ class SportsOddsApp:
         self.create_widgets()
 
         # Configure the grid for resizing
-        self.root.grid_rowconfigure(2, weight=1)
-        self.root.grid_columnconfigure(1, weight=1)
+        self.root.grid_rowconfigure(2, weight=10)
+        self.root.grid_columnconfigure(1, weight=10)
 
     # Utility Functions
     def load_user_data(self):
@@ -90,10 +90,10 @@ class SportsOddsApp:
     # UI Setup
     def create_styles(self):
         style = ttk.Style()
-        style.configure("TLabel", font=(FONT, self.current_font_size), background=BACKGROUND_COLOR, foreground=TEXT_COLOR)
+        style.configure("TLabel", font=(FONT, self.current_font_size), background=PRIMARY_COLOR, foreground=TEXT_COLOR)
         style.configure("TButton", font=(FONT, self.current_font_size), background=PRIMARY_COLOR, foreground=TEXT_COLOR)
-        style.configure("Treeview.Heading", font=(FONT, self.current_font_size, "bold"), background=SECONDARY_COLOR, foreground=TEXT_COLOR)
-        style.configure("Treeview", font=(FONT, self.current_font_size), rowheight=25, background=BACKGROUND_COLOR, foreground=TEXT_COLOR)
+        style.configure("Treeview.Heading", font=(FONT, self.current_font_size, "bold"), background=PRIMARY_COLOR, foreground=TEXT_COLOR)
+        style.configure("Treeview", font=(FONT, self.current_font_size), rowheight=25, background=PRIMARY_COLOR, foreground=TEXT_COLOR)
         style.configure("Favorite.Treeview", background=HIGHLIGHT_COLOR)
 
     def create_widgets(self):
@@ -106,33 +106,37 @@ class SportsOddsApp:
 
     def create_header_frame(self):
         header_frame = ttk.Frame(self.root, padding="10", style="TFrame")
-        header_frame.grid(row=0, column=0, columnspan=2, sticky=tk.EW, pady=(40, 10))  # Moved down
+        header_frame.grid(row=0, column=0, columnspan=2, sticky=tk.EW, pady=(0, 0))  # Moved down
 
         # Header Labels
         self.header_label = ttk.Label(header_frame, text="Live Sports Odds", font=(FONT, 18, "bold"))
-        self.header_label.grid(row=0, column=0, sticky=tk.W)
+        self.header_label.grid(row=0, column=0, sticky=tk.NW)
 
         self.login_label = ttk.Label(header_frame, text="Not logged in", font=(FONT, self.current_font_size))
-        self.login_label.grid(row=0, column=1, sticky=tk.E)
+        self.login_label.grid(row=0, column=16, sticky=tk.E)
 
-        # Header Controls
-        ttk.Checkbutton(header_frame, text="Show Only Favorites", variable=self.show_favorites_var, command=self.toggle_favorites_view).grid(row=0, column=2, padx=10)
-        ttk.Checkbutton(header_frame, text="Enable Notifications", variable=self.notify_var).grid(row=0, column=3, padx=10)
+        self.login_label = ttk.Label(header_frame, text="Login", font=(FONT, self.current_font_size))
+        self.login_label.grid(row=0, column=17, sticky=tk.E)
+
 
     def create_sidebar(self):
         self.sidebar_frame = ttk.LabelFrame(self.root, text="User Account Interface", padding="10")
         self.sidebar_frame.grid(row=2, column=0, sticky=tk.NSEW, pady=(10, 10))
 
-        # Sidebar Controls
-        ttk.Button(self.sidebar_frame, text="Login / Create Account", command=self.login).grid(row=0, column=0, pady=10)
+
         self.team_listbox = tk.Listbox(self.sidebar_frame, height=4, width=25, bg=BACKGROUND_COLOR, fg=TEXT_COLOR)
         self.team_listbox.grid(row=10, column=0, pady=5)
-        ttk.Button(self.sidebar_frame, text="Add Team", command=self.add_favorite_team).grid(row=8, column=0, pady=5)
-        ttk.Button(self.sidebar_frame, text="Remove Team", command=self.remove_favorite_team).grid(row=7, column=0, pady=5)
-        ttk.Button(self.sidebar_frame, text="Show Analytics", command=self.show_analytics).grid(row=9, column=0, padx=10)
+        ttk.Button(self.sidebar_frame, text="Add Favorite", command=self.add_favorite_team).grid(row=7, column=0, pady=5)
+        ttk.Button(self.sidebar_frame, text="Remove Favorite", command=self.remove_favorite_team).grid(row=8, column=0, pady=5)
+        ttk.Button(self.sidebar_frame, text="Show Analytics", command=self.show_analytics).grid(row=17, column=0, padx=10)
 
         self.expand_button = ttk.Button(self.sidebar_frame, text="Collapse account interface", command=self.toggle_sidebar)
         self.expand_button.grid(row=0, column=0, padx=10)
+
+        # Header Controls
+        ttk.Checkbutton(self.sidebar_frame, text="Show Only Favorites", variable=self.show_favorites_var, command=self.toggle_favorites_view).grid(row=16, column=0, padx=10)
+        ttk.Checkbutton(self.sidebar_frame, text="Enable Notifications", variable=self.notify_var).grid(row=15, column=0, padx=0)
+
 
     def create_odds_frame(self):
         odds_frame = ttk.Frame(self.root, padding="10", style="TFrame")
@@ -144,6 +148,7 @@ class SportsOddsApp:
         # Filter Section
         filter_frame = ttk.Frame(odds_frame, padding="10", style="TFrame")
         filter_frame.grid(row=1, column=0, columnspan=2, sticky=tk.W)
+
         ttk.Button(filter_frame, text="Show Upcoming Games", command=self.show_upcoming_games).grid(row=0, column=0, pady=0)
         ttk.Button(filter_frame, text="Show Live Sports", command=self.show_live_sports).grid(row=1, column=0, pady=5)
 
@@ -162,7 +167,7 @@ class SportsOddsApp:
         odds_frame.grid_rowconfigure(3, weight=1)
         odds_frame.grid_columnconfigure(0, weight=1)
 
-        odds_canvas = tk.Canvas(odds_frame, bg=BACKGROUND_COLOR)
+        odds_canvas = tk.Canvas(odds_frame, bg=PRIMARY_COLOR)
         odds_canvas.grid(row=3, column=0, sticky="nsew")
 
         # Vertical and Horizontal Scrollbars
