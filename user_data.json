@@ -1,0 +1,12 @@
+{
+    "George": {
+        "favorites": {
+            "teams": [
+                "Lions"
+            ],
+            "leagues": [
+                "NFL"
+            ]
+        }
+    }
+}
